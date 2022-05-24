@@ -4,6 +4,6 @@
 
 <ul>
   <% @files.each do |file_name| %>
-    <a href= "/documents/<%= file_name %>"><li><%= file_name %></li></a>
+    <li><a href= "/documents/<%= file_name %>"><%= file_name %></a></li>
   <% end %>
 </ul>
