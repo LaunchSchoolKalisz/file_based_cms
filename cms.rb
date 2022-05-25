@@ -3,6 +3,7 @@ require 'sinatra/reloader' if development?
 require 'tilt/erubis'
 require 'sinatra/content_for'
 require 'redcarpet'
+require 'yaml'
 
 configure do
   enable :sessions
@@ -45,6 +46,10 @@ helpers do
       erb render_markdown(content)
     end
   end
+
+  def load_users
+    YAML.load_file('users.yml')
+  end
 end
 
 get "/" do
@@ -58,7 +63,7 @@ end
 
 get "/documents/new" do
   check_sign_in_status
-  
+
   erb :new
 end
 
@@ -131,7 +136,11 @@ get "/users/sign_in" do
 end
 
 post "/users/sign_in" do
-  if params[:username] == "admin" && params[:password] == "secret"
+  approved_users = load_users
+  username = params[:username]
+  password = params[:password]
+
+  if approved_users.keys.include?(username) && approved_users[username] == password
     session[:username] = params[:username]
     session[:message] = "Welcome!"
     redirect "/"

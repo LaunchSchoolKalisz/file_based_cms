@@ -1,0 +1,6 @@
+
+{
+  admin: secret,
+  bill: billspassword,
+  sonia: soniaspassword
+}
