@@ -140,7 +140,7 @@ post "/users/sign_in" do
   username = params[:username]
   password = params[:password]
 
-  if approved_users.keys.include?(username) && approved_users[username] == password
+  if approved_users.key?(username) && approved_users[username] == password
     session[:username] = params[:username]
     session[:message] = "Welcome!"
     redirect "/"
