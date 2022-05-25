@@ -11,6 +11,24 @@ configure do
   set :session_secret, 'super secret'
 end
 
+helpers do
+  def render_markdown(text)
+    markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+    markdown.render(text)
+  end
+
+  def load_file_content(path)
+    content = File.read(path)
+    case File.extname(path)
+    when ".txt"
+      headers["Content-Type"] = "text/plain"
+      content
+    when ".md"
+      render_markdown(content)
+    end
+  end
+end
+
 get "/" do
   @files = Dir.glob(root + "/documents/*").map do |path|
     File.basename(path)
@@ -23,8 +41,7 @@ get "/documents/:filename" do
   file_path = root + "/documents/" + params[:filename]
 
   if File.file?(file_path)
-    headers["Content-Type"] = "text/plain"
-    File.read(file_path)
+    load_file_content(file_path)
   else
     session[:message] = "#{params[:filename]} does not exist."
     redirect "/"
