@@ -17,6 +17,18 @@ def data_path
   end
 end
 
+def signed_in?
+  return true if session[:username]
+  false
+end
+
+def check_sign_in_status
+  if signed_in? == false
+    session[:message] = "Please sign in to access that page."
+    redirect "/"
+  end
+end
+
 helpers do
   def render_markdown(text)
     markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
@@ -45,10 +57,13 @@ get "/" do
 end
 
 get "/documents/new" do
+  check_sign_in_status
+  
   erb :new
 end
 
 post "/documents/new" do
+  check_sign_in_status
   filename = params[:filename].to_s
 
   if filename.size == 0
@@ -80,6 +95,7 @@ end
 
 
 get "/documents/:filename/edit" do
+  check_sign_in_status
   file_path = File.join(data_path, params[:filename])
 
   @filename = params[:filename]
@@ -89,6 +105,7 @@ get "/documents/:filename/edit" do
 end
 
 post "/documents/:filename" do
+  check_sign_in_status
   file_path = File.join(data_path, params[:filename])
   
   File.write(file_path, params[:content])
@@ -99,6 +116,7 @@ post "/documents/:filename" do
 end
 
 post "/documents/:filename/destroy" do
+  check_sign_in_status
   file_path = File.join(data_path, params[:filename])
 
   File.delete(file_path)
