@@ -4,8 +4,6 @@ require 'tilt/erubis'
 require 'sinatra/content_for'
 require 'redcarpet'
 
-root = File.expand_path("..", __FILE__)
-
 configure do
   enable :sessions
   set :session_secret, 'super secret'
@@ -29,18 +27,27 @@ helpers do
   end
 end
 
+def data_path
+  if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/documents/", __FILE__)
+  else
+    File.expand_path("../documents/", __FILE__)
+  end
+end
+
 get "/" do
-  @files = Dir.glob(root + "/documents/*").map do |path|
+  pattern = File.join(data_path, "*")
+  @files = Dir.glob(pattern).map do |path|
     File.basename(path)
   end
 
-  erb :index, layout: :layout
+  erb :index
 end
 
 get "/documents/:filename" do
-  file_path = root + "/documents/" + params[:filename]
+  file_path = File.join(data_path, params[:filename])
 
-  if File.file?(file_path)
+  if File.exist?(file_path)
     load_file_content(file_path)
   else
     session[:message] = "#{params[:filename]} does not exist."
@@ -50,20 +57,21 @@ end
 
 
 get "/documents/:filename/edit" do
+  file_path = File.join(data_path, params[:filename])
+  
   @filename = params[:filename]
-  file_path = root + "/documents/" + params[:filename]
   @content = File.read(file_path)
+
   erb :edit
 end
 
 post "/documents/:filename" do
-  file_path = root + "/documents/" + params[:filename]
+  file_path = File.join(data_path, params[:filename])
   
   File.write(file_path, params[:content])
 
   session[:message] = "#{params[:filename]} has been updated."
 
   redirect "/"
-  erb :edit
 end
 
