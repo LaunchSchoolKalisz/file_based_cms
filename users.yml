@@ -1,5 +1,6 @@
 
 {
+  developer: letmein,
   admin: secret,
   bill: billspassword,
   sonia: soniaspassword
