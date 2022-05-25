@@ -1,0 +1,9 @@
+body {
+  padding: 1em;
+  font-family: sans-serif;
+}
+
+.flash_message {
+  background-color: lightgoldenrodyellow;
+  padding: 10px;
+}
