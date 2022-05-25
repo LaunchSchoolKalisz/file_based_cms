@@ -115,6 +115,12 @@ class CMSTest < Minitest::Test
     assert_includes last_response.body, "test.txt"
   end
 
+  def test_create_new_invalid_document
+    post "/documents/new", filename: "test"
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "A file name ending in .md or .txt is required."
+  end
+
   def test_create_new_document_without_filename
     post "/documents/new", filename: ""
     assert_equal 422, last_response.status
