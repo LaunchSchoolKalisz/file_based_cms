@@ -51,10 +51,19 @@ end
 
 get "/documents/:filename/edit" do
   @filename = params[:filename]
+  @file_path = root + "/documents/" + params[:filename]
+  @content = File.read(@file_path)
   erb :edit
 end
 
-post "/documents/:filename/edit" do
+post "/documents/:filename" do
+  file_path = root + "/documents/" + params[:filename]
+  
+  File.write(file_path, params[:content])
+
+  session[:message] = "#{params[:filename]} has been updated."
+
+  redirect "/"
   erb :edit
 end
 
