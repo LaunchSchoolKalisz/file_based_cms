@@ -98,15 +98,12 @@ post "/documents/:filename" do
   redirect "/"
 end
 
-get "/documents/:filename/destroy" do
+post "/documents/:filename/destroy" do
   file_path = File.join(data_path, params[:filename])
 
-  filename = params[:filename]
   File.delete(file_path)
 
-  session[:message] = "#{filename} has been deleted."
+  session[:message] = "#{params[:filename]} has been deleted."
   
   redirect "/"
-
-  erb :index
 end
