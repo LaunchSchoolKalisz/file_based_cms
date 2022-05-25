@@ -4,6 +4,7 @@ require 'tilt/erubis'
 require 'sinatra/content_for'
 require 'redcarpet'
 require 'yaml'
+require 'bcrypt'
 
 configure do
   enable :sessions
@@ -27,6 +28,17 @@ def check_sign_in_status
   if signed_in? == false
     session[:message] = "Please sign in to access that page."
     redirect "/"
+  end
+end
+
+def valid_credentials?(username, password)
+  credentials = load_users
+
+  if credentials.key?(username) 
+    bcrypt_password = BCrypt::Password.new(credentials[username])
+    bcrypt_password == password
+  else 
+    false
   end
 end
 
@@ -140,7 +152,7 @@ post "/users/sign_in" do
   username = params[:username]
   password = params[:password]
 
-  if approved_users.key?(username) && approved_users[username] == password
+  if valid_credentials?(username, password)
     session[:username] = params[:username]
     session[:message] = "Welcome!"
     redirect "/"
