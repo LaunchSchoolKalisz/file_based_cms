@@ -107,3 +107,25 @@ post "/documents/:filename/destroy" do
   
   redirect "/"
 end
+
+get "/users/sign_in" do
+  erb :sign_in
+end
+
+post "/users/sign_in" do
+  if params[:username] == "admin" && params[:password] == "secret"
+    session[:username] = params[:username]
+    session[:message] = "Welcome!"
+    redirect "/"
+  else
+    session[:message] = "Invalid credentials"
+    status 422
+    erb :sign_in
+  end
+end
+
+post "/users/sign_out" do
+  session.delete(:username)
+  session[:message] = "You have been signed out."
+  redirect "/"
+end
