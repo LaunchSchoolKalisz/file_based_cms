@@ -48,3 +48,13 @@ get "/documents/:filename" do
   end
 end
 
+
+get "/documents/:filename/edit" do
+  @filename = params[:filename]
+  erb :edit
+end
+
+post "/documents/:filename/edit" do
+  erb :edit
+end
+
