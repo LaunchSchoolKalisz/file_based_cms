@@ -48,7 +48,7 @@ get "/documents/new" do
   erb :new
 end
 
-post "/documents/new" do
+post "/documents/create" do
   filename = params[:filename].to_s
 
   if filename.size == 0
