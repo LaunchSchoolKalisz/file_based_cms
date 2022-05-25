@@ -48,18 +48,22 @@ get "/documents/new" do
   erb :new
 end
 
-post "/documents/create" do
+post "/documents/new" do
   filename = params[:filename].to_s
 
   if filename.size == 0
     session[:message] = "A file name is required."
     status 422
     erb :new
-  else
+  elsif filename[-4..-1] == ".txt" || filename[-3..-1] == ".md"
     file_path = File.join(data_path, filename)
     File.write(file_path, "")
     session[:message] = "#{params[:filename]} has been created."
     redirect "/"
+  else
+    session[:message] = "A file name ending in .md or .txt is required." 
+    status 422
+    erb :new
   end
 end
 
