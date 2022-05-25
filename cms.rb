@@ -9,6 +9,14 @@ configure do
   set :session_secret, 'super secret'
 end
 
+def data_path
+  if ENV["RACK_ENV"] == "test"
+    File.expand_path("../test/documents/", __FILE__)
+  else
+    File.expand_path("../documents/", __FILE__)
+  end
+end
+
 helpers do
   def render_markdown(text)
     markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
@@ -24,14 +32,6 @@ helpers do
     when ".md"
       render_markdown(content)
     end
-  end
-end
-
-def data_path
-  if ENV["RACK_ENV"] == "test"
-    File.expand_path("../test/documents/", __FILE__)
-  else
-    File.expand_path("../documents/", __FILE__)
   end
 end
 
@@ -58,7 +58,7 @@ end
 
 get "/documents/:filename/edit" do
   file_path = File.join(data_path, params[:filename])
-  
+
   @filename = params[:filename]
   @content = File.read(file_path)
 
